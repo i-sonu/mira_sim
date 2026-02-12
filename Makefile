@@ -101,6 +101,10 @@ simulator-tac-docking:
 	${WS} && \
 	ros2 launch dnt_simulator tac_docking.launch.py
 
+simulator-tank:
+	${WS} && \
+	ros2 launch dnt_simulator bluerov2_sim.py
+
 sitl:
 	${WS} && \
 	docker-compose up ardupilot-sitl
