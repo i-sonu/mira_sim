@@ -343,7 +343,14 @@
 			<ros_publisher topic="/$(arg vehicle_name)/dvl_sim" 
 						   altitude_topic="/$(arg vehicle_name)/altitude"/>
 		</sensor> -->
-
+		
+		<sensor name="camera_bottom" rate="10.0" type="camera">
+			<specs resolution_x="800" resolution_y="600" horizontal_fov="55.0"/>
+			<origin xyz="0.3 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<link name="base_link"/>
+			<ros_publisher topic="/bluerov2/camera_bottom"/>
+		</sensor> 
+		
 		<!-- <sensor name="camera_front" type="camera" rate="10.0">
 			<link name="base_link"/>
 			<origin rpy="1.2 0.0 1.571" xyz="0.3 0.0 0.0"/>
