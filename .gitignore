@@ -33,4 +33,5 @@ __pycache__/
 *$py.class
 
 ardupilot/**/*
+ardupilot/*
 

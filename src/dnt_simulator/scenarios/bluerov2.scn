@@ -427,7 +427,7 @@
 		<origin xyz="0.0025 0.1105 -0.005" rpy="0 -1.5707963268 0"/> -->
 
 		<world_transform xyz="$(arg position)" rpy="$(arg orientation)"/>
-		
+		<ros_base_link_transform publish="true"/>
 		<ros_subscriber thrusters="/bluerov2/thrusters"/>
 		<ros_publisher thrusters="/$(arg vehicle_name)/thruster_state"/>
 	</robot>

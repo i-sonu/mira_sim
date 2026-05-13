@@ -13,8 +13,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(get_package_share_directory('stonefish_ros2') + \
                                       '/launch/stonefish_simulator.launch.py'),
         launch_arguments={
-            'simulation_data': get_package_share_directory('stonefish_bluerov2')+'/data/',
-            'scenario_desc': get_package_share_directory('stonefish_bluerov2')+'/scenarios/bluerov2_tank.scn',
+            'simulation_data': get_package_share_directory('common_resources')+'/data/',
+            'scenario_desc': get_package_share_directory('dnt_simulator')+'/scenarios/bluerov2_tank.scn',
             'simulation_rate': '100.0',
             'window_res_x': '960',
             'window_res_y': '1056',
@@ -23,7 +23,7 @@ def generate_launch_description():
     )
 
     ardusim_patch = Node(
-            package='stonefish_bluerov2',
+            package='dnt_simulator',
             namespace='bluerov2',
             executable='ardusim_patch.py',
             name='ardusim_patch',
