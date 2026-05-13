@@ -109,6 +109,10 @@ sitl:
 	${WS} && \
 	docker-compose up ardupilot-sitl
 
+sim_master: check-ros
+	${WS} && \
+	ros2 run sim_master sim_bridge
+
 
 changed:
 	@packages=$$( \
