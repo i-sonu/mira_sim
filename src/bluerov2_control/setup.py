@@ -38,7 +38,6 @@ setup(
             'motion_controller = bluerov2_control.motion_controller:main',
             'mission_script = bluerov2_control.mission_script:main',
             'docking_p1 = bluerov2_control.docking_p1:main',
-            'docking_p2 = bluerov2_control.docking_p2:main',
             'docking_p2_perception = bluerov2_control.docking_p2_perception:main',
             'docking_p2_controller = bluerov2_control.docking_p2_controller:main',
         ],
