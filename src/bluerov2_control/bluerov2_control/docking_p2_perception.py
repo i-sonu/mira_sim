@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import Image
+from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 import cv2
 import cv2.aruco as aruco
@@ -112,6 +113,12 @@ class UnderwaterDockingNode(Node):
         )
         self.get_logger().info("Subscribed to /bluerov2/camera_bottom/image_color")
 
+        # --- Phase 2 handoff signal ---
+        self.phase_pub = self.create_publisher(Bool, '/docking_phase2', 10)
+        self.phase2_triggered = False
+        self.detect_count = 0
+        self.TRIGGER_FRAMES = 3
+
     def load_calibration(self, path):
         if not os.path.exists(path):
             self.get_logger().error(f"Calibration file not found: {path}")
@@ -129,14 +136,33 @@ class UnderwaterDockingNode(Node):
             pts[mid] = base + np.array(offset, dtype=np.float32)
         return pts
 
+    def update_phase2_trigger(self, ids):
+        """Raise the /docking_phase2 signal once a dock marker is seen for
+        TRIGGER_FRAMES consecutive frames. Latches True once raised."""
+        if not self.phase2_triggered:
+            board_seen = ids is not None and any(
+                int(m) in self.board_points for m in ids.flatten()
+            )
+            self.detect_count = self.detect_count + 1 if board_seen else 0
+            if self.detect_count >= self.TRIGGER_FRAMES:
+                self.phase2_triggered = True
+                self.get_logger().info(
+                    "ArUco dock marker detected -> triggering Phase 2 handoff"
+                )
+        if self.phase2_triggered:
+            self.phase_pub.publish(Bool(data=True))
+
     def image_callback(self, msg: Image):
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = self.clahe.apply(gray) 
+        gray = self.clahe.apply(gray)
 
         # --- OpenCV 4.13 FIX FOR DETECTING MARKERS ---
         corners, ids, _ = self.detector.detectMarkers(gray)
+
+        # --- Phase 2 handoff trigger ---
+        self.update_phase2_trigger(ids)
 
         if ids is not None:
             obj_pts, img_pts = [], []

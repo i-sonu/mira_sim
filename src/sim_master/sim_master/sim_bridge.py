@@ -74,7 +74,6 @@ class SimBridge(Node):
     def publish_telemetry(self):
         msg = Telemetry()
         msg.arm = self.armed
-        msg.depth = self.depth
         msg.external_pressure = float(1013.25 + self.depth * 100.0)  # rough approximation
         self.telemetry_pub.publish(msg)
 

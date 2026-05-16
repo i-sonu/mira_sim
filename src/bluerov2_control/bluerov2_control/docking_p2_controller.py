@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Bool
 from custom_msgs.msg import Commands, Telemetry
 import time
 
@@ -100,6 +101,10 @@ class Phase2Controller(Node):
         self.create_subscription(PoseStamped, "dock_pose", self.pose_callback, 10)
         self.create_subscription(Telemetry, "/master/telemetry", self.telem_callback, 10)
 
+        # --- Phase 2 handoff gate ---
+        self.phase2_enabled = False
+        self.create_subscription(Bool, "/docking_phase2", self.phase2_cb, 10)
+
         # Run loop at 20Hz (0.05s)
         self.create_timer(0.05, self.control_loop)
 
@@ -113,6 +118,12 @@ class Phase2Controller(Node):
     def telem_callback(self, msg: Telemetry):
         # Update arm state from actual telemetry
         self.is_armed = msg.arm
+
+    def phase2_cb(self, msg: Bool):
+        """Phase 1 perception detected ArUco -> unlock the docking sequence."""
+        if msg.data and not self.phase2_enabled:
+            self.phase2_enabled = True
+            self.get_logger().info("Phase 2 engaged - starting docking sequence")
 
     def pose_callback(self, msg: PoseStamped):
         """Receives the exact center of the dock from the Perception Script"""
@@ -173,8 +184,12 @@ class Phase2Controller(Node):
     # MAIN CONTROL LOOP
     # ---------------------------------------------------------
     def control_loop(self):
+        # Stay completely idle until perception signals an ArUco detection
+        if not self.phase2_enabled:
+            return
+
         now = time.time()
-        
+
         # 1. Execute robust startup sequence first
         if not self.startup_done:
             self.startup_sequence(now)

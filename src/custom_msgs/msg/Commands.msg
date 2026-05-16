@@ -1,8 +1,10 @@
-string mode
 bool arm
-int32 forward
-int32 lateral
-int32 thrust
-int32 yaw
-int32 pitch
-int32 roll
+string mode
+int16 forward
+int16 lateral
+int16 thrust
+int16 pitch
+int16 roll
+int16 yaw
+int16 servo1
+int16 servo2

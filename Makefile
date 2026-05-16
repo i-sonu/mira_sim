@@ -116,6 +116,10 @@ sim_master: check-ros
 	${WS} && \
 	ros2 run sim_master sim_bridge
 
+docking: check-ros
+	${WS} && \
+	ros2 launch bluerov2_control docking.launch.py
+
 
 changed:
 	@packages=$$( \
